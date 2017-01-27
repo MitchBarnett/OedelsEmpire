@@ -9,17 +9,21 @@ import android.graphics.Rect;
  */
 
 public class Placeable {
-    private Rect shape;
+    public Rect shape;
     private int xPos;
     private int yPos;
+    private int width;
+    private int height;
     private int colour;
 
-    public Placeable(Rect shapeIn, int xPosIn, int yPosIn, int colourIn)
+    public Placeable(int xPosIn, int yPosIn, int widthIn, int heightIn, int colourIn)
     {
-        shape = shapeIn;
         xPos = xPosIn;
         yPos = yPosIn;
+        width = widthIn;
+        height = heightIn;
         colour = colourIn;
+        shape = new Rect(xPosIn, yPosIn, xPosIn+ widthIn, yPosIn + heightIn);
     }
 
     public void draw(Canvas c)
@@ -27,5 +31,42 @@ public class Placeable {
         Paint p = new Paint();
         p.setColor(colour);
         c.drawRect(shape, p);
+    }
+
+    public void setPos(int xPosIn, int yPosIn)
+    {
+        xPos = xPosIn;
+        yPos = yPosIn;
+        shape.left = xPosIn;
+        shape.right = xPosIn + width;
+        shape.top = yPosIn;
+        shape.bottom = yPosIn + height;
+
+    }
+    public void setColour(int colourIn)
+    {
+        colour = colourIn;
+    }
+
+    public int getWidth()
+    {
+        return  width;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
+
+    public void setWidth(int widthIn)
+    {
+        width = widthIn;
+        shape.right = xPos + widthIn;
+    }
+
+    public void setHeight(int heightIn)
+    {
+        height = heightIn;
+        shape.bottom = yPos + heightIn;
     }
 }

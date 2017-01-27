@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,6 +13,8 @@ import com.example.frogman.myapplication.R;
 
 public class MainActivity extends AppCompatActivity {
     private GameLoop gameLoop;
+    private float xPos;
+    private float yPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         gameLoop = new GameLoop(this, screenSize);
         setContentView(gameLoop);
+    }
+
+    public  boolean onTouchEvent(MotionEvent event)
+    {
+
+        int eventAction = event.getAction();
+
+        switch (eventAction)
+        {
+            case MotionEvent.ACTION_DOWN:
+                xPos =  event.getX();
+                yPos =  event.getY();
+                gameLoop.pressUpdate(xPos, yPos);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                xPos =  event.getX();
+                yPos =  event.getY();
+                gameLoop.pressUpdate(xPos, yPos);
+                break;
+            case MotionEvent.ACTION_UP:
+                gameLoop.pressRelease();
+                break;
+        }
+        gameLoop.pressUpdate(xPos, yPos);
+        return  true;
     }
 
     @Override

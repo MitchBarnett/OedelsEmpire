@@ -38,16 +38,22 @@ public class GameLoop extends SurfaceView implements Runnable{
         super(context);
         holder = getHolder();
         screenSize = screenS;
+        game = new Game();
     }
 
     public void pressUpdate(float xPos, float yPos)
     {
+        game.pressUpdate(xPos, yPos);
+    }
 
+    public void pressRelease()
+    {
+        game.pressRelease();
     }
 
     private void updateCanvas ()
     {
-
+        game.update();
     }
 
     protected void drawCanvas(Canvas canvas)
@@ -57,6 +63,7 @@ public class GameLoop extends SurfaceView implements Runnable{
         paint.setColor(Color.WHITE);
         paint.setTextSize(100);
         canvas.drawText("Hello World!", 0, 100, paint);
+        game.render(canvas);
     }
 
     public void run()

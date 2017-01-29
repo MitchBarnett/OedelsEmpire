@@ -9,7 +9,7 @@ import android.graphics.Paint;
  */
 
 
-public class Tower extends Placeable {
+public class Tower extends GameObject {
 
     private  int range = 250;
     int rangeColour = Color.argb(175, 75, 75, 75);
@@ -33,6 +33,10 @@ public class Tower extends Placeable {
         }
         p.setColor(Color.RED);
         c.drawCircle(center.x, center.y, radius, p);
+        p.setTextSize(30);
+        p.setColor(Color.BLACK);
+        p.setTextAlign(Paint.Align.CENTER);
+        c.drawText("Tower",(float) this.center.x, (float) this.center.y, p);
     }
 
     public void setRangeColour(int colourIn)

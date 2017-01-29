@@ -4,31 +4,35 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
+import com.example.frogman.myapplication.Model.BoxCollider;
+import com.example.frogman.myapplication.Model.CircleCollider;
+
 /**
  * Created by frogman on 27/01/2017.
  */
 
+
 public class Collision
 {
-    public static boolean isColliding(Point point, Point center, float radius)
+    public static boolean isColliding(Point point, CircleCollider circle)
     {
-        double dist = Math.pow((point.x-center.x), 2) + Math.pow((point.y-center.y), 2);
+        double dist = Math.pow((point.x-circle.center().x), 2) + Math.pow((point.y-circle.center().y), 2);
 
-        return  dist < Math.pow(radius , 2);
+        return  dist < Math.pow(circle.radius() , 2);
     }
 
-    public static boolean isColliding(Point point, Rect rect)
+    public static boolean isColliding(Point point, BoxCollider box)
     {
         return  false;
     }
 
-    public static boolean isColliding(Rect rectA, Rect rectB)
+    public static boolean isColliding(BoxCollider boxA, BoxCollider boxB)
     {
-        if(rectA.right < rectB.left || rectA.left > rectB.right)
+        if(boxA.right() < boxB.left() || boxA.left() > boxB.right())
         {
             return false;
         }
-        else if (rectA.bottom < rectB.top || rectA.top > rectB.bottom)
+        else if (boxA.bottom() < boxB.top() || boxA.top() > boxB.bottom())
         {
             return false;
         }
@@ -36,31 +40,31 @@ public class Collision
         return true;
     }
 
-    public static boolean isColliding(Rect rect, Point center, float radius)
+    public static boolean isColliding(BoxCollider box, CircleCollider circle)
     {
         Point circleDistance = new Point();
-        circleDistance.x = Math.abs(center.x - rect.centerX());
-        circleDistance.y = Math.abs(center.y - rect.centerY());
+        circleDistance.x = Math.abs(circle.center().x - box.center().x);
+        circleDistance.y = Math.abs(circle.center().y - box.center().y);
 
-        if(circleDistance.x > (rect.width()/2 + radius)) {return false;}
-        if(circleDistance.y > (rect.height()/2 + radius)) {return false;}
+        if(circleDistance.x > (box.width()/2 + circle.radius())) {return false;}
+        if(circleDistance.y > (box.height()/2 + circle.radius())) {return false;}
 
-        if(circleDistance.x <= (rect.width()/2)) {return true;}
-        if(circleDistance.y <= (rect.height()/2)) {return true;}
+        if(circleDistance.x <= (box.width()/2)) {return true;}
+        if(circleDistance.y <= (box.height()/2)) {return true;}
 
-        double cornerDistanceSquare = Math.pow((circleDistance.x = rect.width()/2),2) +
-                Math.pow((circleDistance.y - rect.height()/2), 2);
-        return  (cornerDistanceSquare <= (Math.pow(radius,2)));
+        double cornerDistanceSquare = Math.pow((circleDistance.x = box.width()/2),2) +
+                Math.pow((circleDistance.y - box.height()/2), 2);
+        return  (cornerDistanceSquare <= (Math.pow(circle.radius(),2)));
     }
 
-    public static boolean isColliding(Point centerA, float radiusA, Point centerB, float radiusB)
+    public static boolean isColliding(CircleCollider circleA, CircleCollider circleB)
     {
-        int distX = Math.abs(centerA.x - centerB.x);
-        int distY = Math.abs(centerA.y - centerB.y);
+        int distX = Math.abs(circleA.center().x - circleB.center().x);
+        int distY = Math.abs(circleA.center().y - circleB.center().y);
 
         int totalDist = distX * distX + distY * distY;
 
-        float radiusSum = radiusA + radiusB;
+        float radiusSum = circleA.radius() + circleB.radius();
 
         return  totalDist <= radiusSum * radiusSum;
 

@@ -10,13 +10,17 @@ import android.graphics.Rect;
  * Created by frogman on 26/01/2017.
  */
 
-public class Placeable {
+public class GameObject  implements Collidable{
     protected Point center = new Point();
     protected float radius = 100;
     private boolean visible = true;
-    public Placeable()
-    {
+    private CircleCollider collider;
+    private boolean updateable = false;
+    private boolean collidable = false;
 
+    public GameObject()
+    {
+        collider = new CircleCollider(center, radius);
     }
 
     public void draw(Canvas c)
@@ -26,6 +30,8 @@ public class Placeable {
         c.drawCircle(center.x, center.y, radius, p);
     }
 
+    public void update(){}
+
 
     public void setPos(int xPosIn, int yPosIn)
     {
@@ -34,7 +40,8 @@ public class Placeable {
 
     public void setPos(Point posIn)
     {
-        center = posIn;
+        this.center = posIn;
+        collider.setCenter(this.center);
     }
 
     public Point getCenter()
@@ -49,11 +56,22 @@ public class Placeable {
 
     public void setRadius(float radiusIn)
     {
-        radius = radiusIn;
+        this.radius = radiusIn;
     }
 
     public boolean isVisible() {return visible;}
 
-    public void setVisible(boolean b) {visible = b;}
+    public void setVisible(boolean b) {this.visible = b;}
 
+    public boolean isUpdateable() {return updateable;}
+
+    public void setCollidable(boolean collidable) {this.collidable = collidable;}
+
+    public void setUpdateable(boolean updateable) {this.updateable = updateable;}
+
+    public boolean isCollidable() {return collidable;}
+
+    public CircleCollider  getCollider() {
+        return this.collider;
+    }
 }

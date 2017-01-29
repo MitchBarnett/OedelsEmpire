@@ -38,7 +38,7 @@ public class GameLoop extends SurfaceView implements Runnable{
         super(context);
         holder = getHolder();
         screenSize = screenS;
-        game = new Game();
+        game = new Game(screenS);
     }
 
     public void pressUpdate(float xPos, float yPos)

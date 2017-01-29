@@ -1,7 +1,9 @@
 package com.example.frogman.myapplication.Model;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 /**
@@ -9,64 +11,49 @@ import android.graphics.Rect;
  */
 
 public class Placeable {
-    public Rect shape;
-    private int xPos;
-    private int yPos;
-    private int width;
-    private int height;
-    private int colour;
-
-    public Placeable(int xPosIn, int yPosIn, int widthIn, int heightIn, int colourIn)
+    protected Point center = new Point();
+    protected float radius = 100;
+    private boolean visible = true;
+    public Placeable()
     {
-        xPos = xPosIn;
-        yPos = yPosIn;
-        width = widthIn;
-        height = heightIn;
-        colour = colourIn;
-        shape = new Rect(xPosIn, yPosIn, xPosIn+ widthIn, yPosIn + heightIn);
+
     }
 
     public void draw(Canvas c)
     {
         Paint p = new Paint();
-        p.setColor(colour);
-        c.drawRect(shape, p);
+        p.setColor(Color.RED);
+        c.drawCircle(center.x, center.y, radius, p);
     }
+
 
     public void setPos(int xPosIn, int yPosIn)
     {
-        xPos = xPosIn;
-        yPos = yPosIn;
-        shape.left = xPosIn;
-        shape.right = xPosIn + width;
-        shape.top = yPosIn;
-        shape.bottom = yPosIn + height;
-
-    }
-    public void setColour(int colourIn)
-    {
-        colour = colourIn;
+        center.set(xPosIn, yPosIn);
     }
 
-    public int getWidth()
+    public void setPos(Point posIn)
     {
-        return  width;
+        center = posIn;
     }
 
-    public int getHeight()
+    public Point getCenter()
     {
-        return height;
+        return center;
     }
 
-    public void setWidth(int widthIn)
+    public float getRadius()
     {
-        width = widthIn;
-        shape.right = xPos + widthIn;
+        return radius;
     }
 
-    public void setHeight(int heightIn)
+    public void setRadius(float radiusIn)
     {
-        height = heightIn;
-        shape.bottom = yPos + heightIn;
+        radius = radiusIn;
     }
+
+    public boolean isVisible() {return visible;}
+
+    public void setVisible(boolean b) {visible = b;}
+
 }

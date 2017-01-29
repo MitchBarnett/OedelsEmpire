@@ -2,11 +2,14 @@ package com.example.frogman.myapplication.Presenter;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Debug;
 import android.util.Log;
 
 import com.example.frogman.myapplication.Model.Placeable;
+import com.example.frogman.myapplication.Model.Tower;
 
 import java.util.ArrayList;
 
@@ -16,35 +19,67 @@ import java.util.ArrayList;
 
 public class Game {
     private Placeable placeableIcon;
-    private ArrayList<Placeable> placeables;
-    private boolean active;
-    public Game()
+    private ArrayList<Tower> towers;
+    private boolean placementInProgress = false;
+    private Rect uiRect;
+    private Point screenSize;
+
+    public Game(Point screenS)
     {
-        placeables = new ArrayList<>();
-        placeableIcon = new Placeable(100, 100, 100, 100, Color.RED);
+        screenSize = screenS;
+        towers = new ArrayList<>();
+        placeableIcon = new Placeable();
+        placeableIcon.setPos(screenSize.x - 150, screenSize.y/2);
+        uiRect = new Rect(screenSize.x - 300, 0, screenSize.x, screenSize.y);
     }
 
     public void pressUpdate(float xPos, float yPos)
     {
-        if(!active && xPos > placeableIcon.shape.left && xPos < placeableIcon.shape.right &&
-                yPos > placeableIcon.shape.top && yPos < placeableIcon.shape.bottom)
+        Point pos = new Point((int) xPos, (int) yPos);
+        if(Collision.isColliding(pos, placeableIcon.getCenter() , placeableIcon.getRadius()) && !placementInProgress)
         {
-            placeables.add(new Placeable(100, 100, 100, 100, Color.argb(50, 255, 0, 0)));
-            active = true;
+            towers.add(new Tower());
+            placementInProgress = true;
         }
-        if(active)
+        if(placementInProgress)
         {
-            int centerX = (int) xPos - (placeables.get(placeables.size()-1).getWidth() / 2);
-            int centerY = (int) yPos - (placeables.get(placeables.size()-1).getHeight() / 2 );
-            placeables.get(placeables.size()-1).setPos(centerX, centerY);
+            towers.get(towers.size()-1).setPos(pos);
+            towers.get(towers.size()-1).setRangeColour(Color.argb(175, 75, 75, 75));
+            if(Collision.isColliding(uiRect, towers.get(towers.size()-1).getCenter(),  towers.get(towers.size()-1).getRadius()))
+            {
+                towers.get(towers.size()-1).setRangeColour(Color.argb(175, 75, 0, 0));
+            }
+
+            for(int i = 0; i < towers.size() -1 ; i++)
+            {
+                if(Collision.isColliding(towers.get(i).getCenter(), towers.get(i).getRadius(),
+                        towers.get(towers.size()-1).getCenter(),  towers.get(towers.size()-1).getRadius()))
+                {
+                    towers.get(towers.size()-1).setRangeColour(Color.argb(175, 75, 0, 0));
+                }
+            }
         }
     }
 
-    public void pressRelease()
-    {
-        active = false;
+    public void pressRelease() {
+        boolean colliding = false;
+        if(Collision.isColliding(uiRect, towers.get(towers.size()-1).getCenter(),  towers.get(towers.size()-1).getRadius()))
+        {
+            colliding = true;
+        }
+        for (int i = 0; i < towers.size() - 1; i++) {
+            if (Collision.isColliding(towers.get(i).getCenter(), towers.get(i).getRadius(),
+                    towers.get(towers.size() - 1).getCenter(), towers.get(towers.size() - 1).getRadius()))
+            {
+                colliding = true;
+            }
 
-        placeables.get(placeables.size()-1).setColour(Color.RED);
+        }
+        if (!colliding)
+        {
+            placementInProgress = false;
+            towers.get(towers.size() - 1).showRange(false);
+        }
     }
 
     public void update()
@@ -54,10 +89,12 @@ public class Game {
 
     public void render(Canvas canvas)
     {
+        Paint p = new Paint();
+        canvas.drawRect(uiRect, p);
         placeableIcon.draw(canvas);
-        for(Placeable item : placeables)
+        for(Tower item : towers)
         {
-            item.draw(canvas);
+            if (item.isVisible()) {item.draw(canvas);}
         }
     }
 }

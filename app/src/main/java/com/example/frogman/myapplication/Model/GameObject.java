@@ -14,6 +14,7 @@ public class GameObject  implements Collidable{
     protected Point center = new Point();
     protected float radius = 100;
     private boolean visible = true;
+    public int colour = Color.RED;
     private CircleCollider collider;
     private boolean updateable = false;
     private boolean collidable = false;
@@ -26,7 +27,7 @@ public class GameObject  implements Collidable{
     public void draw(Canvas c)
     {
         Paint p = new Paint();
-        p.setColor(Color.RED);
+        p.setColor(colour);
         c.drawCircle(center.x, center.y, radius, p);
     }
 
@@ -73,5 +74,9 @@ public class GameObject  implements Collidable{
 
     public CircleCollider  getCollider() {
         return this.collider;
+    }
+
+    public void setColour(int colour) {
+        this.colour = colour;
     }
 }

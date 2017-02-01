@@ -5,12 +5,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Debug;
-import android.util.Log;
 
 import com.example.frogman.myapplication.Model.BoxCollider;
 import com.example.frogman.myapplication.Model.GameObject;
+import com.example.frogman.myapplication.Model.Placeable;
 import com.example.frogman.myapplication.Model.Tower;
+import com.example.frogman.myapplication.Model.Trap;
 
 import java.util.ArrayList;
 
@@ -20,9 +20,10 @@ import java.util.ArrayList;
 
 public class Game {
     private GameObject placeableIcon;
-    private  ArrayList<GameObject> gameObjects;
+    private GameObject trapIcon;
+    private ArrayList<GameObject> gameObjects;
     private ArrayList<Tower> towers;
-    private Tower towerBeingPlaced = null;
+    private Placeable objectBeingPlaced = null;
     private Rect uiRect;
     private BoxCollider uiCollider;
     private Point screenSize;
@@ -33,8 +34,12 @@ public class Game {
         towers = new ArrayList<>();
         gameObjects = new ArrayList<>();
         placeableIcon = new GameObject();
+        trapIcon = new GameObject();
+        trapIcon.setColour(Color.GREEN);
         gameObjects.add(placeableIcon);
+        gameObjects.add(trapIcon);
         placeableIcon.setPos(screenSize.x - 150, screenSize.y/2);
+        trapIcon.setPos(screenSize.x - 150, screenSize.y/4);
         uiRect = new Rect(screenSize.x - 300, 0, screenSize.x, screenSize.y);
         uiCollider = new BoxCollider(uiRect);
     }
@@ -42,26 +47,36 @@ public class Game {
     public void pressUpdate(float xPos, float yPos)
     {
         Point pos = new Point((int) xPos, (int) yPos);
-        if(Collision.isColliding(pos, placeableIcon.getCollider()) && towerBeingPlaced == null)
+        if(Collision.isColliding(pos, placeableIcon.getCollider()) && objectBeingPlaced == null)
         {
             gameObjects.add(new Tower());
-            towerBeingPlaced = (Tower) gameObjects.get(gameObjects.size()-1);
+            objectBeingPlaced = (Placeable) gameObjects.get(gameObjects.size()-1);
+            objectBeingPlaced.isBeingPlaced = true;
         }
-        if(towerBeingPlaced != null)
+
+        if(Collision.isColliding(pos, trapIcon.getCollider()) && objectBeingPlaced == null)
         {
-           towerBeingPlaced.setPos(pos);
-            towerBeingPlaced.setRangeColour(Color.argb(175, 75, 75, 75));
-            if(Collision.isColliding(uiCollider, towerBeingPlaced.getCollider()))
+            gameObjects.add(new Trap());
+            objectBeingPlaced = (Trap) gameObjects.get(gameObjects.size()-1);
+            objectBeingPlaced.isBeingPlaced = true;
+        }
+
+
+        if(objectBeingPlaced != null)
+        {
+            objectBeingPlaced.isColiding = false;
+            objectBeingPlaced.setPos(pos);
+            if(Collision.isColliding(uiCollider, objectBeingPlaced.getCollider()))
             {
-               towerBeingPlaced.setRangeColour(Color.argb(175, 75, 0, 0));
+               objectBeingPlaced.isColiding = true;
             }
 
             for(int i = 0; i < gameObjects.size() -1 ; i++)
             {
                 if(Collision.isColliding(gameObjects.get(i).getCollider(),
-                        towerBeingPlaced.getCollider()))
+                        objectBeingPlaced.getCollider()))
                 {
-                    towerBeingPlaced.setRangeColour(Color.argb(175, 75, 0, 0));
+                    objectBeingPlaced.isColiding = true;
                 }
             }
         }
@@ -69,16 +84,16 @@ public class Game {
 
     public void pressRelease()
     {
-        if(towerBeingPlaced != null)
+        if(objectBeingPlaced != null)
         {
             boolean colliding = false;
-            if(Collision.isColliding(uiCollider, towerBeingPlaced.getCollider()))
+            if(Collision.isColliding(uiCollider, objectBeingPlaced.getCollider()))
             {
                 colliding = true;
             }
             for (int i = 0; i < gameObjects.size() - 1; i++) {
                 if (Collision.isColliding(gameObjects.get(i).getCollider(),
-                        towerBeingPlaced.getCollider()))
+                        objectBeingPlaced.getCollider()))
                 {
                     colliding = true;
                 }
@@ -86,8 +101,8 @@ public class Game {
             }
             if (!colliding)
             {
-                towerBeingPlaced.showRange(false);
-                towerBeingPlaced = null;
+                objectBeingPlaced.isBeingPlaced = false;
+                objectBeingPlaced = null;
             }
         }
 

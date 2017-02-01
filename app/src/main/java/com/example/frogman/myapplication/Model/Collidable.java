@@ -6,4 +6,5 @@ package com.example.frogman.myapplication.Model;
 
 public interface Collidable {
     public Collider getCollider();
+
 }
